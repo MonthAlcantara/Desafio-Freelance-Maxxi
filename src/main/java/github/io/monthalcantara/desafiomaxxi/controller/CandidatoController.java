@@ -4,6 +4,9 @@ import github.io.monthalcantara.desafiomaxxi.dto.CandidatoDTO;
 import github.io.monthalcantara.desafiomaxxi.exceptions.RecursoNaoEncontrado;
 import github.io.monthalcantara.desafiomaxxi.model.Candidato;
 import github.io.monthalcantara.desafiomaxxi.repository.CandidatoRepository;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,6 +28,9 @@ public class CandidatoController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation("Busca todos os Candidatos")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Candidatos não localizados"),
+            @ApiResponse(code = 200, message = "Candidatos localizados")})
     public Page getAll(@PageableDefault(size = 5) Pageable pageable) {
       log.info("Buscando todos os candidatos registrados em banco");
         Page candidatos = candidatoRepository.findAll(pageable);
@@ -32,6 +38,9 @@ public class CandidatoController {
     }
 
     @GetMapping("/{id}")
+    @ApiOperation("Busca um Candidato pelo id")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Recurso não encontrado"),
+            @ApiResponse(code = 200, message = "Candidato localizado")})
     public ResponseEntity findById(@PathVariable Long id){
         log.info("Buscando o candidato registrado em banco com o id: {}", id);
         Optional<Candidato> candidatoOptional = candidatoRepository.findById(id);
@@ -40,6 +49,9 @@ public class CandidatoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation("Cadastra um novo Candidato")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Candidato cadastrado"),
+            @ApiResponse(code = 201, message = "Candidato cadastrado com sucesso")})
     public CandidatoDTO save(@RequestBody @Valid CandidatoDTO novoCandidato) {
         log.info("Adicionando um novo candidato no banco de dados");
         Candidato candidato = converteDtoParaCandidato(novoCandidato);
@@ -48,6 +60,10 @@ public class CandidatoController {
     }
 
     @PutMapping("/{id}")
+    @ApiOperation("Atualiza um Candidato")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Recurso não encontrado"),
+            @ApiResponse(code = 200, message = "Candidato localizado"),
+            @ApiResponse(code = 201, message = "Candidato atualizado com sucesso")})
     public ResponseEntity update(@PathVariable Long id, @RequestBody @Valid CandidatoDTO candidatoDTO){
         log.info("Atualizando o candidatos registrado em banco com o id: {} ", id);
         Optional<Candidato> candidatoOptional = candidatoRepository.findById(id);
@@ -62,6 +78,10 @@ public class CandidatoController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation("Exclui um Candidato")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Recurso não encontrado"),
+            @ApiResponse(code = 200, message = "Candidato localizado"),
+            @ApiResponse(code = 201, message = "Candidato excluído com sucesso")})
     public void delete(@PathVariable Long id){
         log.info("Buscando o candidato registrado em banco com o id: {}", id);
         candidatoRepository.deleteById(id);
