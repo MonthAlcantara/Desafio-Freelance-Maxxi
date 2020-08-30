@@ -31,7 +31,7 @@ public class CandidatoController {
     @ApiOperation("Busca todos os Candidatos")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Candidatos não localizados"),
             @ApiResponse(code = 200, message = "Candidatos localizados")})
-    public Page getAll(@PageableDefault(size = 5) Pageable pageable) {
+    public Page getAll(@PageableDefault(page= 0, size = 5) Pageable pageable) {
       log.info("Buscando todos os candidatos registrados em banco");
         Page candidatos = candidatoRepository.findAll(pageable);
         return candidatos;
