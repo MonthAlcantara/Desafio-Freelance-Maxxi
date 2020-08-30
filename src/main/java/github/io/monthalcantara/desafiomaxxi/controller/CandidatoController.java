@@ -31,8 +31,8 @@ public class CandidatoController {
     @ApiOperation("Busca todos os Candidatos")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Candidatos não localizados"),
             @ApiResponse(code = 200, message = "Candidatos localizados")})
-    public Page getAll(@PageableDefault(page= 0, size = 5) Pageable pageable) {
-      log.info("Buscando todos os candidatos registrados em banco");
+    public Page getAll(@PageableDefault(page = 0, size = 5) Pageable pageable) {
+        log.info("Buscando todos os candidatos registrados em banco");
         Page candidatos = candidatoRepository.findAll(pageable);
         return candidatos;
     }
@@ -41,7 +41,7 @@ public class CandidatoController {
     @ApiOperation("Busca um Candidato pelo id")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Recurso não encontrado"),
             @ApiResponse(code = 200, message = "Candidato localizado")})
-    public ResponseEntity findById(@PathVariable Long id){
+    public ResponseEntity findById(@PathVariable Long id) {
         log.info("Buscando o candidato registrado em banco com o id: {}", id);
         Optional<Candidato> candidatoOptional = candidatoRepository.findById(id);
         return new ResponseEntity(candidatoOptional.orElseThrow(() -> new RecursoNaoEncontrado("Recurso não encontrado")), HttpStatus.OK);
@@ -64,13 +64,13 @@ public class CandidatoController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Recurso não encontrado"),
             @ApiResponse(code = 200, message = "Candidato localizado"),
             @ApiResponse(code = 201, message = "Candidato atualizado com sucesso")})
-    public ResponseEntity update(@PathVariable Long id, @RequestBody @Valid CandidatoDTO candidatoDTO){
+    public ResponseEntity update(@PathVariable Long id, @RequestBody @Valid CandidatoDTO candidatoDTO) {
         log.info("Atualizando o candidatos registrado em banco com o id: {} ", id);
         Optional<Candidato> candidatoOptional = candidatoRepository.findById(id);
         return new ResponseEntity(candidatoOptional.map(c -> {
-                c.setNome(candidatoDTO.getNome());
-                c.setPartido(candidatoDTO.getPartido());
-                c.setNumero(candidatoDTO.getNumero());
+            c.setNome(candidatoDTO.getNome());
+            c.setPartido(candidatoDTO.getPartido());
+            c.setNumero(candidatoDTO.getNumero());
             return converteCandidatoParaDTO(candidatoRepository.save(c));
         }).orElseThrow(() -> new RecursoNaoEncontrado("Recurso não encontrado")), HttpStatus.OK);
     }
@@ -82,9 +82,14 @@ public class CandidatoController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Recurso não encontrado"),
             @ApiResponse(code = 200, message = "Candidato localizado"),
             @ApiResponse(code = 201, message = "Candidato excluído com sucesso")})
-    public void delete(@PathVariable Long id){
+    public void delete(@PathVariable Long id) {
         log.info("Buscando o candidato registrado em banco com o id: {}", id);
-        candidatoRepository.deleteById(id);
+        Optional<Candidato> candidato = candidatoRepository.findById(id);
+        if (candidato.isPresent()) {
+            candidatoRepository.deleteById(id);
+        } else {
+            throw new RecursoNaoEncontrado("Recurso não encontrado");
+        }
     }
 
     private Candidato converteDtoParaCandidato(CandidatoDTO candidatoDTO) {
@@ -95,7 +100,7 @@ public class CandidatoController {
                 .build();
     }
 
-    private CandidatoDTO converteCandidatoParaDTO(Candidato candidato){
+    private CandidatoDTO converteCandidatoParaDTO(Candidato candidato) {
         return new CandidatoDTO().builder()
                 .nome(candidato.getNome())
                 .numero(candidato.getNumero())
