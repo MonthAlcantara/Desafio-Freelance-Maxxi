@@ -9,6 +9,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -27,17 +29,20 @@ public class CandidatoController {
     CandidatoRepository candidatoRepository;
 
     @GetMapping
+    @Cacheable("candidatos")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation("Busca todos os Candidatos")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Candidatos não localizados"),
             @ApiResponse(code = 200, message = "Candidatos localizados")})
     public Page getAll(@PageableDefault(page = 0, size = 5) Pageable pageable) {
         log.info("Buscando todos os candidatos registrados em banco");
+        System.out.println("Chamou sem cache");
         Page candidatos = candidatoRepository.findAll(pageable);
         return candidatos;
     }
 
     @GetMapping("/{id}")
+    @Cacheable("candidatos")
     @ApiOperation("Busca um Candidato pelo id")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Recurso não encontrado"),
             @ApiResponse(code = 200, message = "Candidato localizado")})
@@ -48,6 +53,7 @@ public class CandidatoController {
     }
 
     @PostMapping
+    @Cacheable("candidatos")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation("Cadastra um novo Candidato")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Candidato cadastrado"),
@@ -60,6 +66,7 @@ public class CandidatoController {
     }
 
     @PutMapping("/{id}")
+    @Cacheable("candidatos")
     @ApiOperation("Atualiza um Candidato")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Recurso não encontrado"),
             @ApiResponse(code = 200, message = "Candidato localizado"),
@@ -77,6 +84,7 @@ public class CandidatoController {
 
 
     @DeleteMapping("/{id}")
+    @Cacheable("candidatos")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation("Exclui um Candidato")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Recurso não encontrado"),
@@ -90,6 +98,12 @@ public class CandidatoController {
         } else {
             throw new RecursoNaoEncontrado("Recurso não encontrado");
         }
+    }
+
+    @GetMapping("/cancel")
+    @CacheEvict("candidatos")
+    public void cancel(){
+        System.out.println("Limpando cache");
     }
 
     private Candidato converteDtoParaCandidato(CandidatoDTO candidatoDTO) {
