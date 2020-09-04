@@ -46,7 +46,6 @@ public class CandidatoController {
             @ApiResponse(code = 200, message = "Candidato localizado")})
     public Candidato findById(@PathVariable Long id) {
         log.info("Buscando o candidato registrado em banco com o id: {}", id);
-        System.out.println("Chamou sem cache");
         Optional<Candidato> candidatoOptional = candidatoRepository.findById(id);
         return candidatoOptional.orElseThrow(() -> new RecursoNaoEncontrado("Recurso não encontrado"));
     }
