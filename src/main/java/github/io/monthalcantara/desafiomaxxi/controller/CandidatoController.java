@@ -46,10 +46,11 @@ public class CandidatoController {
     @ApiOperation("Busca um Candidato pelo id")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Recurso não encontrado"),
             @ApiResponse(code = 200, message = "Candidato localizado")})
-    public ResponseEntity findById(@PathVariable Long id) {
+    public Candidato findById(@PathVariable Long id) {
         log.info("Buscando o candidato registrado em banco com o id: {}", id);
+        System.out.println("Chamou sem cache");
         Optional<Candidato> candidatoOptional = candidatoRepository.findById(id);
-        return new ResponseEntity(candidatoOptional.orElseThrow(() -> new RecursoNaoEncontrado("Recurso não encontrado")), HttpStatus.OK);
+        return candidatoOptional.orElseThrow(() -> new RecursoNaoEncontrado("Recurso não encontrado"));
     }
 
     @PostMapping
