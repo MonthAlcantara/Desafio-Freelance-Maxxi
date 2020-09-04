@@ -30,13 +30,11 @@ public class CandidatoController {
 
     @GetMapping
     @Cacheable("candidatos")
-    @ResponseStatus(HttpStatus.OK)
     @ApiOperation("Busca todos os Candidatos")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Candidatos não localizados"),
             @ApiResponse(code = 200, message = "Candidatos localizados")})
     public Page getAll(@PageableDefault(page = 0, size = 5) Pageable pageable) {
         log.info("Buscando todos os candidatos registrados em banco");
-        System.out.println("Chamou sem cache");
         Page candidatos = candidatoRepository.findAll(pageable);
         return candidatos;
     }
@@ -103,7 +101,7 @@ public class CandidatoController {
 
     @GetMapping("/cancel")
     @CacheEvict("candidatos")
-    public void cancel(){
+    public void cancel() {
         System.out.println("Limpando cache");
     }
 
