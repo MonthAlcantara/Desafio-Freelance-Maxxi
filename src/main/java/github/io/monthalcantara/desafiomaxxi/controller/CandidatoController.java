@@ -34,7 +34,7 @@ public class CandidatoController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Candidatos não localizados"),
             @ApiResponse(code = 200, message = "Candidatos localizados")})
     public Page getAll(@PageableDefault(page = 0, size = 5) Pageable pageable) {
-        log.info("Buscando todos os candidatos registrados em banco");
+        log.info("Buscando todos os candidatos salvos em banco");
         Page candidatos = candidatoRepository.findAll(pageable);
         return candidatos;
     }
@@ -45,13 +45,12 @@ public class CandidatoController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Recurso não encontrado"),
             @ApiResponse(code = 200, message = "Candidato localizado")})
     public Candidato findById(@PathVariable Long id) {
-        log.info("Buscando o candidato registrado em banco com o id: {}", id);
+        log.info("Buscando o candidato salvo em banco com o id: {}", id);
         Optional<Candidato> candidatoOptional = candidatoRepository.findById(id);
         return candidatoOptional.orElseThrow(() -> new RecursoNaoEncontrado("Recurso não encontrado"));
     }
 
     @PostMapping
-    @Cacheable("candidatos")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation("Cadastra um novo Candidato")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Candidato cadastrado"),
@@ -64,7 +63,6 @@ public class CandidatoController {
     }
 
     @PutMapping("/{id}")
-    @Cacheable("candidatos")
     @ApiOperation("Atualiza um Candidato")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Recurso não encontrado"),
             @ApiResponse(code = 200, message = "Candidato localizado"),
@@ -82,7 +80,6 @@ public class CandidatoController {
 
 
     @DeleteMapping("/{id}")
-    @Cacheable("candidatos")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation("Exclui um Candidato")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Recurso não encontrado"),
@@ -99,9 +96,9 @@ public class CandidatoController {
     }
 
     @GetMapping("/cancel")
-    @CacheEvict("candidatos")
+    @CacheEvict(cacheNames = "candidatos", allEntries = true)
     public void cancel() {
-        System.out.println("Limpando cache");
+        log.info("Limpando cache");
     }
 
     private Candidato converteDtoParaCandidato(CandidatoDTO candidatoDTO) {
