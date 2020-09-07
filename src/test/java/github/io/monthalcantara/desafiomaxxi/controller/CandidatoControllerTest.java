@@ -63,17 +63,17 @@ public class CandidatoControllerTest {
         String json = new ObjectMapper().writeValueAsString(candidato);
         BDDMockito.given(candidatoRepository.findById(Mockito.anyLong())).willReturn(Optional.of(candidato));
 
-    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(CANDIDATO_API.concat("/1"))
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .content(json);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(CANDIDATO_API.concat("/1"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
 
-    mvc
-            .perform(request).andExpect(status().isOk())
-            .andExpect(jsonPath("id").value(1L))
-            .andExpect(jsonPath("numero").value(13))
-            .andExpect(jsonPath("partido").value("PT"))
-            .andExpect(jsonPath("nome").value("LULA"));
+        mvc
+                .perform(request).andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(1L))
+                .andExpect(jsonPath("numero").value(13))
+                .andExpect(jsonPath("partido").value("PT"))
+                .andExpect(jsonPath("nome").value("LULA"));
     }
 
     @Test
@@ -110,7 +110,8 @@ public class CandidatoControllerTest {
                 .perform(request).andExpect(status().isNoContent());
     }
 
-    private Candidato geradorDeCandidato(){
+
+    private Candidato geradorDeCandidato() {
         return Candidato.builder()
                 .numero(13)
                 .partido("PT")

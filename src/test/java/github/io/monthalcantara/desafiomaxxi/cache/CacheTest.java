@@ -2,9 +2,6 @@ package github.io.monthalcantara.desafiomaxxi.cache;
 
 import github.io.monthalcantara.desafiomaxxi.model.Candidato;
 import github.io.monthalcantara.desafiomaxxi.repository.CandidatoRepository;
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -13,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -38,21 +33,21 @@ public class CacheTest {
 
     @Test
     @DisplayName("Deve buscar a primeira vez no banco e na segunda usar o cache")
-    public void testCache() throws Exception {
+    public void testCacheFindById() throws Exception {
         candidato = geradorDeCandidato();
         BDDMockito
                 .given(candidatoRepository.findById(Mockito.anyLong()))
                 .willReturn(Optional.of(candidato));
 
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+        MockHttpServletRequestBuilder requestSemCacheTest = MockMvcRequestBuilders
                 .get(CANDIDATO_API.concat("/1"));
 
-        mvc.perform(request);
+        mvc.perform(requestSemCacheTest);
 
-        request = MockMvcRequestBuilders
+        MockHttpServletRequestBuilder requestComCacheTest = MockMvcRequestBuilders
                 .get(CANDIDATO_API.concat("/1"));
 
-        mvc.perform(request);
+        mvc.perform(requestComCacheTest);
 
         Mockito.verify(candidatoRepository,
                 Mockito.times(1))
