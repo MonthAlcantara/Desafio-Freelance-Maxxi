@@ -44,6 +44,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/h2/**",
+                "/v1/candidatos/1",
+                "/v1/usuarios/contador",
                 "/v1/usuarios/auth",
                 "/configuration/**"
         );
