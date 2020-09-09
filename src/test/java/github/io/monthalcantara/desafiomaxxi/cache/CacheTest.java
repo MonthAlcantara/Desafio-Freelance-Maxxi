@@ -17,6 +17,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Optional;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @EnableCaching
@@ -39,15 +42,18 @@ public class CacheTest {
                 .given(candidatoRepository.findById(Mockito.anyLong()))
                 .willReturn(Optional.of(candidato));
 
-        MockHttpServletRequestBuilder requestSemCacheTest = MockMvcRequestBuilders
-                .get(CANDIDATO_API.concat("/1"));
+        for (int i = 0; i < 10; i++) {
 
-        mvc.perform(requestSemCacheTest);
+            MockHttpServletRequestBuilder requestSemCacheTest = MockMvcRequestBuilders
+                    .get(CANDIDATO_API.concat("/1"));
 
-        MockHttpServletRequestBuilder requestComCacheTest = MockMvcRequestBuilders
-                .get(CANDIDATO_API.concat("/1"));
-
-        mvc.perform(requestComCacheTest);
+            mvc.perform(requestSemCacheTest)
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("id").value(1L))
+                    .andExpect(jsonPath("numero").value(13))
+                    .andExpect(jsonPath("partido").value("PT"))
+                    .andExpect(jsonPath("nome").value("LULA"));
+        }
 
         Mockito.verify(candidatoRepository,
                 Mockito.times(1))

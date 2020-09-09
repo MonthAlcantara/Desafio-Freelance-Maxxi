@@ -15,12 +15,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @RestController
@@ -34,6 +32,8 @@ public class UsuarioController {
     @Autowired
     private JwtService jwtService;
 
+    int i = 0;
+    
     @PostMapping("/auth")
     @ApiOperation("Gera um Token de Acesso")
     @Cacheable("usuarios")
@@ -53,5 +53,16 @@ public class UsuarioController {
         } catch (UsernameNotFoundException | SenhaInvalidaException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
+    }
+
+    @GetMapping("/contador")
+    public Integer contaRefresh(HttpServletRequest request) {
+        Integer pageViews = 1;
+        if (request.getSession().getAttribute("pageViews") != null) {
+            pageViews += (Integer) request.getSession().getAttribute("pageViews");
+        }
+        request.getSession().setAttribute("pageViews", pageViews);
+
+        return pageViews;
     }
 }
