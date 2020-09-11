@@ -11,10 +11,14 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.session.data.redis.RedisOperationsSessionRepository;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -28,12 +32,15 @@ import javax.servlet.http.HttpSession;
 public class UsuarioController {
 
     @Autowired
+    RedisTemplate<String, String> redisTemplate;
+
+    @Autowired
     private UsuarioService userService;
     @Autowired
     private JwtService jwtService;
 
     int i = 0;
-    
+
     @PostMapping("/auth")
     @ApiOperation("Gera um Token de Acesso")
     @Cacheable("usuarios")
@@ -56,13 +63,30 @@ public class UsuarioController {
     }
 
     @GetMapping("/contador")
-    public Integer contaRefresh(HttpServletRequest request) {
+    public String contaRefresh(HttpServletRequest request) {
         Integer pageViews = 1;
         if (request.getSession().getAttribute("pageViews") != null) {
             pageViews += (Integer) request.getSession().getAttribute("pageViews");
         }
         request.getSession().setAttribute("pageViews", pageViews);
-
-        return pageViews;
+        String expira = String.valueOf(request.getSession().getMaxInactiveInterval());
+        String page = String.valueOf(pageViews);
+        return "Numero de refreshs: " + pageViews + " Expira em: " + expira + " segundos";
     }
+
+
+//    @GetMapping("/zeracontador")
+//    public void zeraContador(HttpServletRequest session) {
+//
+//        System.out.println(redisTemplate.getExpire("spring:session:sessions:" + session.getSession().getId()));
+//    //    session.getSession().invalidate();
+//
+//        redisTemplate.delete("spring:session:sessions:" + session.getSession().getId());
+//        redisTemplate.delete("spring:session:sessions:expires:" + session.getSession().getId());
+//
+//        System.out.println("spring:session:sessions:" + session.getSession().getId());
+//        System.out.println("spring:session:sessions:expires:" + session.getSession().getId());
+//
+//
+//    }
 }
