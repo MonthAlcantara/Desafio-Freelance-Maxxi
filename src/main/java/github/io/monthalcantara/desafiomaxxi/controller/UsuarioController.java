@@ -4,7 +4,6 @@ import github.io.monthalcantara.desafiomaxxi.dto.TokenDTO;
 import github.io.monthalcantara.desafiomaxxi.exception.SenhaInvalidaException;
 import github.io.monthalcantara.desafiomaxxi.jwt.JwtService;
 import github.io.monthalcantara.desafiomaxxi.model.Usuario;
-import github.io.monthalcantara.desafiomaxxi.repository.SessionRepository;
 import github.io.monthalcantara.desafiomaxxi.service.interfaces.UsuarioService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -17,6 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.session.SessionRepository;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -88,17 +88,4 @@ public class UsuarioController {
         System.out.println("spring:session:sessions:" + session.getSession().getId());
         System.out.println("spring:session:sessions:expires:" + session.getSession().getId());
     }
-
-    @GetMapping("/salvasessao")
-    public String salvaSessao(HttpSession session){
-        sessionRepository.saveEmployee(session);
-        return String.valueOf(sessionRepository.findById(session.getId()));
-    }
-    @GetMapping("/apagasessao")
-    public boolean apagaSessao(HttpSession session){
-        sessionRepository.delete(session.getId());
-        return session.getId().isEmpty();
-    }
-
-
 }
