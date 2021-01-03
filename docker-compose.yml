@@ -9,6 +9,7 @@ services:
       - "3306:3306"
     volumes:
       - desafio_maxxi:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
 volumes:
   desafio_maxxi:
 
