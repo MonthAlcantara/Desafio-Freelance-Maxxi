@@ -1,11 +1,12 @@
 package github.io.monthalcantara.desafiomaxxi.service.implementacoes;
 
 
-import github.io.monthalcantara.desafiomaxxi.exception.SenhaInvalidaException;
+import github.io.monthalcantara.desafiomaxxi.exceptions.SenhaInvalidaException;
 import github.io.monthalcantara.desafiomaxxi.model.Usuario;
 import github.io.monthalcantara.desafiomaxxi.repository.UsuarioRepository;
 import github.io.monthalcantara.desafiomaxxi.service.interfaces.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Profile("prod")
 public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 
     @Autowired
